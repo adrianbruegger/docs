@@ -1,0 +1,44 @@
+---
+title: 'Einführung'
+description: 'Willkommen bei der Scango API Dokumentation'
+---
+
+Um die API nutzen zu können, muss zuerst ein API-Key generiert werden. Dieser kann unter Einstellungen > Organisation > API Key erstellt werden.
+
+### Basis-URL
+
+`https://dashboard.scango.ch/api/v1`
+
+### Authentifizierung
+
+- Typ: Bearer Token
+- Verwendung: Fügen Sie das Bearer Token in den Authorization-Header für alle Anfragen ein.
+
+## API-Struktur
+
+Die Scango API bietet Zugriff auf folgende Hauptressourcen:
+
+<CardGroup>
+  <Card title="Produkte" icon="box" href="/api-reference/endpoint/products">
+    Verwalten Sie Ihren Produktkatalog
+  </Card>
+  <Card title="Bestellungen" icon="shopping-cart" href="/api-reference/endpoint/orders">
+    Greifen Sie auf Bestellinformationen zu
+  </Card>
+  <Card title="Lieferanten" icon="truck" href="/api-reference/endpoint/suppliers">
+    Sehen Sie Lieferantendetails ein
+  </Card>
+  <Card title="Kategorien" icon="folder-tree" href="/api-reference/endpoint/categories">
+    Durchsuchen Sie Produktkategorien
+  </Card>
+</CardGroup>
+
+## Wichtige Hinweise
+
+<Note>
+Aktuell können Produktbilder nicht über die API hochgeladen werden.
+</Note>
+
+<Note>
+Webhooks sind noch nicht verfügbar. Wir empfehlen, in gewünschten Intervallen nach neuen Bestellungen zu prüfen.
+</Note>

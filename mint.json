@@ -1,29 +1,39 @@
 {
   "$schema": "https://mintlify.com/schema.json",
-  "name": "Starter Kit",
+  "name": "Scango API",
   "logo": {
     "dark": "/logo/dark.svg",
     "light": "/logo/light.svg"
   },
   "favicon": "/favicon.svg",
   "colors": {
-    "primary": "#0D9373",
-    "light": "#07C983",
-    "dark": "#0D9373",
+    "primary": "#4eb8ce",
+    "light": "#6bc5d8",
+    "dark": "#4eb8ce",
     "anchors": {
-      "from": "#0D9373",
-      "to": "#07C983"
+      "from": "#4eb8ce",
+      "to": "#6bc5d8"
     }
   },
+  "versions": [
+    {
+      "name": "Deutsch",
+      "locale": "de"
+    },
+    {
+      "name": "English",
+      "locale": "en"
+    }
+  ],
   "topbarLinks": [
     {
       "name": "Support",
-      "url": "mailto:hi@mintlify.com"
+      "url": "mailto:support@scango.ch"
     }
   ],
   "topbarCtaButton": {
     "name": "Dashboard",
-    "url": "https://dashboard.mintlify.com"
+    "url": "https://dashboard.scango.ch"
   },
   "tabs": [
     {
@@ -33,59 +43,103 @@
   ],
   "anchors": [
     {
-      "name": "Documentation",
-      "icon": "book-open-cover",
-      "url": "https://mintlify.com/docs"
+      "name": "scango.ch Website",
+      "icon": "browser", 
+      "url": "https://scango.ch"
     },
     {
-      "name": "Community",
-      "icon": "slack",
-      "url": "https://mintlify.com/community"
-    },
-    {
-      "name": "Blog",
-      "icon": "newspaper",
-      "url": "https://mintlify.com/blog"
+      "name": "Dokumentation",
+      "icon": "book",
+      "url": "https://siebenberge.notion.site/Dashboard-bf033fbe7e0a4ac3a8271340ad676c8f"
     }
   ],
   "navigation": [
     {
-      "group": "Get Started",
+      "group": "Getting Started",
       "pages": [
-        "introduction",
-        "quickstart",
-        "development"
-      ]
+        "api-reference/en/introduction"
+      ],
+      "version": "English"
     },
     {
-      "group": "Essentials",
+      "group": "Products",
       "pages": [
-        "essentials/markdown",
-        "essentials/code",
-        "essentials/images",
-        "essentials/settings",
-        "essentials/navigation",
-        "essentials/reusable-snippets"
-      ]
+        "api-reference/en/endpoint/products/list",
+        "api-reference/en/endpoint/products/create",
+        "api-reference/en/endpoint/products/get",
+        "api-reference/en/endpoint/products/update",
+        "api-reference/en/endpoint/products/delete"
+      ],
+      "version": "English"
     },
     {
-      "group": "API Documentation",
+      "group": "Orders",
       "pages": [
-        "api-reference/introduction"
-      ]
+        "api-reference/en/endpoint/orders/list",
+        "api-reference/en/endpoint/orders/get"
+      ],
+      "version": "English"
     },
     {
-      "group": "Endpoint Examples",
+      "group": "Suppliers",
       "pages": [
-        "api-reference/endpoint/get",
-        "api-reference/endpoint/create",
-        "api-reference/endpoint/delete"
-      ]
+        "api-reference/en/endpoint/suppliers/list",
+        "api-reference/en/endpoint/suppliers/get"
+      ],
+      "version": "English"
+    },
+    {
+      "group": "Categories",
+      "pages": [
+        "api-reference/en/endpoint/categories/list",
+        "api-reference/en/endpoint/categories/get"
+      ],
+      "version": "English"
+    },
+    {
+      "group": "Erste Schritte",
+      "pages": [
+        "api-reference/de/introduction"
+      ],
+      "version": "Deutsch"
+    },
+    {
+      "group": "Produkte",
+      "pages": [
+        "api-reference/de/endpoint/products/list",
+        "api-reference/de/endpoint/products/create",
+        "api-reference/de/endpoint/products/get",
+        "api-reference/de/endpoint/products/update",
+        "api-reference/de/endpoint/products/delete"
+      ],
+      "version": "Deutsch"
+    },
+    {
+      "group": "Bestellungen",
+      "pages": [
+        "api-reference/de/endpoint/orders/list",
+        "api-reference/de/endpoint/orders/get"
+      ],
+      "version": "Deutsch"
+    },
+    {
+      "group": "Lieferanten",
+      "pages": [
+        "api-reference/de/endpoint/suppliers/list",
+        "api-reference/de/endpoint/suppliers/get"
+      ],
+      "version": "Deutsch"
+    },
+    {
+      "group": "Kategorien",
+      "pages": [
+        "api-reference/de/endpoint/categories/list",
+        "api-reference/de/endpoint/categories/get"
+      ],
+      "version": "Deutsch"
     }
   ],
   "footerSocials": {
-    "x": "https://x.com/mintlify",
-    "github": "https://github.com/mintlify",
-    "linkedin": "https://linkedin.com/company/mintlify"
+    "linkedin": "https://linkedin.com/company/scango"
   }
 }
