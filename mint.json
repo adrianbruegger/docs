@@ -18,7 +18,8 @@
   "versions": [
     {
       "name": "Deutsch",
-      "locale": "de"
+      "locale": "de",
+      "default": true
     },
     {
       "name": "English",
