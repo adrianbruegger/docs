@@ -56,48 +56,6 @@
   ],
   "navigation": [
     {
-      "group": "Getting Started",
-      "pages": [
-        "api-reference/en/introduction"
-      ],
-      "version": "English"
-    },
-    {
-      "group": "Products",
-      "pages": [
-        "api-reference/en/endpoint/products/list",
-        "api-reference/en/endpoint/products/create",
-        "api-reference/en/endpoint/products/get",
-        "api-reference/en/endpoint/products/update",
-        "api-reference/en/endpoint/products/delete"
-      ],
-      "version": "English"
-    },
-    {
-      "group": "Orders",
-      "pages": [
-        "api-reference/en/endpoint/orders/list",
-        "api-reference/en/endpoint/orders/get"
-      ],
-      "version": "English"
-    },
-    {
-      "group": "Suppliers",
-      "pages": [
-        "api-reference/en/endpoint/suppliers/list",
-        "api-reference/en/endpoint/suppliers/get"
-      ],
-      "version": "English"
-    },
-    {
-      "group": "Categories",
-      "pages": [
-        "api-reference/en/endpoint/categories/list",
-        "api-reference/en/endpoint/categories/get"
-      ],
-      "version": "English"
-    },
-    {
       "group": "Erste Schritte",
       "pages": [
         "api-reference/de/introduction"
@@ -138,6 +96,48 @@
         "api-reference/de/endpoint/categories/get"
       ],
       "version": "Deutsch"
+    },
+    {
+      "group": "Getting Started",
+      "pages": [
+        "api-reference/en/introduction"
+      ],
+      "version": "English"
+    },
+    {
+      "group": "Products",
+      "pages": [
+        "api-reference/en/endpoint/products/list",
+        "api-reference/en/endpoint/products/create",
+        "api-reference/en/endpoint/products/get",
+        "api-reference/en/endpoint/products/update",
+        "api-reference/en/endpoint/products/delete"
+      ],
+      "version": "English"
+    },
+    {
+      "group": "Orders",
+      "pages": [
+        "api-reference/en/endpoint/orders/list",
+        "api-reference/en/endpoint/orders/get"
+      ],
+      "version": "English"
+    },
+    {
+      "group": "Suppliers",
+      "pages": [
+        "api-reference/en/endpoint/suppliers/list",
+        "api-reference/en/endpoint/suppliers/get"
+      ],
+      "version": "English"
+    },
+    {
+      "group": "Categories",
+      "pages": [
+        "api-reference/en/endpoint/categories/list",
+        "api-reference/en/endpoint/categories/get"
+      ],
+      "version": "English"
     }
   ],
   "footerSocials": {
