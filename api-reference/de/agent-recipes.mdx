@@ -16,7 +16,7 @@ Jede Anfrage enthält `Authorization: Bearer <api-key>`. Basis-URL: `https://das
 GET /products?q=7610800001234&limit=50
 ```
 
-Treffer stehen in `data[]`. Die Produkt-ID ist `id` (Suchtreffer können zusätzlich `_firestore_id` enthalten).
+Treffer stehen in `data[]`; die Produkt-ID steht in `id`. `meta` liefert Trefferzahlen (`total`/`returned`, bei Suche mit `q` auch `limit`/`offset`).
 
 ## Produktdetails laden
 

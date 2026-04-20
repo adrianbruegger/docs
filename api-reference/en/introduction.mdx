@@ -19,6 +19,17 @@ To use the API, you first need to generate an API key. This can be created under
 
 The machine-readable API definition is in [`api-reference/openapi.json`](/api-reference/openapi.json). Use it with OpenAPI-aware tools, codegen, or assistants.
 
+### List responses (`meta`)
+
+Every **list** endpoint returns `data` (the array) and **`meta`** with at least:
+
+| Field | Meaning |
+| --- | --- |
+| `total` | How many items match the query (for product **search** with `q`, this is the search index’s **estimated** total; for full catalog and for orders, suppliers, and categories lists, it equals the number of items returned in this response). |
+| `returned` | How many items are in `data` for this response. |
+
+When you **search products** with `q`, `meta` also includes `limit` and `offset` for the requested page window. Until server-side pagination exists for other resources, `total` and `returned` are the same for those lists.
+
 ## API Structure
 
 The Scango API provides access to the following main resources:

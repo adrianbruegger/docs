@@ -19,6 +19,17 @@ Um die API nutzen zu können, muss zuerst ein API-Key generiert werden. Dieser k
 
 Die maschinenlesbare API-Definition liegt unter [`api-reference/openapi.json`](/api-reference/openapi.json). Nutzen Sie sie mit OpenAPI-fähigen Tools, Codegeneratoren oder Assistenten.
 
+### Listen-Antworten (`meta`)
+
+Jeder **Listen**-Endpunkt liefert `data` (das Array) und zusätzlich **`meta`** mit mindestens:
+
+| Feld | Bedeutung |
+| --- | --- |
+| `total` | Anzahl passender Einträge (bei **Produktsuche** mit `q` die **geschätzte** Trefferzahl des Suchindexes; bei vollständiger Produktliste sowie bei Bestellungen, Lieferanten und Kategorien entspricht der Wert der Anzahl der in dieser Antwort gelieferten Einträge). |
+| `returned` | Anzahl der Einträge im Array `data` in dieser Antwort. |
+
+Bei **Produktsuche** mit `q` enthält `meta` außerdem `limit` und `offset` für das angefragte Fenster. Solange andere Ressourcen keine serverseitige Paginierung haben, sind `total` und `returned` dort gleich.
+
 ## API-Struktur
 
 Die Scango API bietet Zugriff auf folgende Hauptressourcen:

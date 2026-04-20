@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "Scango API",
-    "description": "API documentation for Scango's dashboard services",
+    "description": "API documentation for Scango's dashboard services.\n\n**List endpoints** return `data` plus `meta` with hit counts (`total`, `returned`; product search with `q` also includes `limit` and `offset`). See schema `ListMeta`.",
     "version": "1.0.0"
   },
   "tags": [
@@ -39,7 +39,7 @@
         "tags": ["Products"],
         "summary": "List or search products",
         "operationId": "listProducts",
-        "description": "Returns products for your organization. With no `q` parameter (or an empty value after trimming), returns the complete product list from the database. When `q` is a non-empty string, returns products matching the query using full-text search over indexed fields (for example name and barcode). The `limit` and `store` parameters apply only when searching with `q`.",
+        "description": "Returns products for your organization. With no `q` parameter (or an empty value after trimming), returns the complete product list from the database. When `q` is a non-empty string, returns products matching the query using full-text search over indexed fields (for example name and barcode). The `limit`, `offset`, and `store` parameters apply only when searching with `q`. Every successful list response includes `meta` with hit counts (and `limit`/`offset` when searching).",
         "parameters": [
           {
             "name": "q",
@@ -63,6 +63,18 @@
             }
           },
           {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "description": "When using `q`, number of search hits to skip (pagination). Must be between 0 and 10000. Default is 0.",
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 10000,
+              "default": 0
+            }
+          },
+          {
             "name": "store",
             "in": "query",
             "required": false,
@@ -79,17 +91,21 @@
         ],
         "responses": {
           "200": {
-            "description": "List of products. When `q` is used, results come from search and field set may differ slightly from the full list response.",
+            "description": "List of products. When `q` is used, results come from search and field set may differ slightly from the full list response. The response always includes `meta` (see `ListMeta`).",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
+                  "required": ["data", "meta"],
                   "properties": {
                     "data": {
                       "type": "array",
                       "items": {
                         "$ref": "#/components/schemas/Product"
                       }
+                    },
+                    "meta": {
+                      "$ref": "#/components/schemas/ListMeta"
                     }
                   }
                 },
@@ -107,7 +123,11 @@
                           "category": "cat_01",
                           "supplier": "sup_01"
                         }
-                      ]
+                      ],
+                      "meta": {
+                        "total": 1,
+                        "returned": 1
+                      }
                     }
                   },
                   "searchResults": {
@@ -120,10 +140,16 @@
                           "price": 120,
                           "barcode": "7610800001234",
                           "taxCategory": "2.6",
-                          "instance": "org_01",
-                          "_firestore_id": "a1b2c3"
+                          "category": "cat_01",
+                          "supplier": "sup_01"
                         }
-                      ]
+                      ],
+                      "meta": {
+                        "total": 42,
+                        "returned": 20,
+                        "limit": 20,
+                        "offset": 0
+                      }
                     }
                   }
                 }
@@ -393,7 +419,7 @@
         "tags": ["Orders"],
         "summary": "List orders",
         "operationId": "listOrders",
-        "description": "Returns orders of a specific organization",
+        "description": "Returns orders of a specific organization. The response includes `meta` with hit counts (`ListMeta`). The API returns all matching orders in one response (no `limit`/`offset`); `total` and `returned` are equal.",
         "parameters": [
           {
             "name": "start",
@@ -425,17 +451,21 @@
         ],
         "responses": {
           "200": {
-            "description": "List of orders",
+            "description": "List of orders with `meta` (`ListMeta`).",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
+                  "required": ["data", "meta"],
                   "properties": {
                     "data": {
                       "type": "array",
                       "items": {
                         "$ref": "#/components/schemas/Order"
                       }
+                    },
+                    "meta": {
+                      "$ref": "#/components/schemas/ListMeta"
                     }
                   }
                 },
@@ -454,7 +484,11 @@
                       },
                       "products": []
                     }
-                  ]
+                  ],
+                  "meta": {
+                    "total": 1,
+                    "returned": 1
+                  }
                 }
               }
             }
@@ -526,20 +560,24 @@
         "tags": ["Suppliers"],
         "summary": "List suppliers",
         "operationId": "listSuppliers",
-        "description": "Returns all suppliers of an organization",
+        "description": "Returns all suppliers of an organization. The response includes `meta` (`ListMeta`). `total` and `returned` match the length of `data`.",
         "responses": {
           "200": {
-            "description": "List of suppliers",
+            "description": "List of suppliers with `meta`.",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
+                  "required": ["data", "meta"],
                   "properties": {
                     "data": {
                       "type": "array",
                       "items": {
                         "$ref": "#/components/schemas/Supplier"
                       }
+                    },
+                    "meta": {
+                      "$ref": "#/components/schemas/ListMeta"
                     }
                   }
                 },
@@ -550,7 +588,11 @@
                       "name": "Example supplier",
                       "description": ""
                     }
-                  ]
+                  ],
+                  "meta": {
+                    "total": 1,
+                    "returned": 1
+                  }
                 }
               }
             }
@@ -606,20 +648,24 @@
         "tags": ["Categories"],
         "summary": "List categories",
         "operationId": "listCategories",
-        "description": "Returns all categories of an organization",
+        "description": "Returns all categories of an organization. The response includes `meta` (`ListMeta`). `total` and `returned` match the length of `data`.",
         "responses": {
           "200": {
-            "description": "List of categories",
+            "description": "List of categories with `meta`.",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
+                  "required": ["data", "meta"],
                   "properties": {
                     "data": {
                       "type": "array",
                       "items": {
                         "$ref": "#/components/schemas/Category"
                       }
+                    },
+                    "meta": {
+                      "$ref": "#/components/schemas/ListMeta"
                     }
                   }
                 },
@@ -630,7 +676,11 @@
                       "name": "Beverages",
                       "description": ""
                     }
-                  ]
+                  ],
+                  "meta": {
+                    "total": 1,
+                    "returned": 1
+                  }
                 }
               }
             }
@@ -925,6 +975,29 @@
           },
           "description": {
             "type": "string"
+          }
+        }
+      },
+      "ListMeta": {
+        "type": "object",
+        "required": ["total", "returned"],
+        "description": "Included on every list response. When the endpoint does not paginate server-side, `total` and `returned` are the same (length of `data`). When listing products with `q`, `total` is the search index’s estimated number of matching documents; `returned` is how many items are in this response; `limit` and `offset` describe the requested window.",
+        "properties": {
+          "total": {
+            "type": "integer",
+            "description": "Estimated or exact count of matching items (see endpoint behavior). For product search with `q`, this is the search engine’s estimated total hits and may not be exact for very large indexes."
+          },
+          "returned": {
+            "type": "integer",
+            "description": "Number of items in the `data` array in this response."
+          },
+          "limit": {
+            "type": "integer",
+            "description": "Only when using `GET /products` with `q`: maximum hits per response (1–250)."
+          },
+          "offset": {
+            "type": "integer",
+            "description": "Only when using `GET /products` with `q`: number of hits skipped (pagination)."
           }
         }
       },
