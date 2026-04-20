@@ -1,0 +1,50 @@
+---
+title: 'Agent-Rezepte'
+description: 'Häufige API-Abläufe für Automation und Assistenten'
+version: 'Deutsch'
+---
+
+## Authentifizierung
+
+Jede Anfrage enthält `Authorization: Bearer <api-key>`. Basis-URL: `https://dashboard.scango.ch/api/v1`.
+
+## Produkt per Barcode oder Name finden
+
+`GET /products` mit Abfrageparameter `q` (Volltextsuche). Stabile Kennung: **listProducts**.
+
+```http
+GET /products?q=7610800001234&limit=50
+```
+
+Treffer stehen in `data[]`. Die Produkt-ID ist `id` (Suchtreffer können zusätzlich `_firestore_id` enthalten).
+
+## Produktdetails laden
+
+1. Produkt-ID aus der Suche oder aus Ihrem System verwenden.
+2. `GET /products/{productId}` — **getProduct**
+
+Antwort: `{ "data": { ... } }`.
+
+## Bestellungen im Zeitraum
+
+`GET /orders` mit `start` und `end` als ISO-8601-Zeitstempel — **listOrders**.
+
+Für aktuelle Daten in Intervallen abfragen; Webhooks sind derzeit nicht verfügbar (siehe Einführung).
+
+## Bestellung mit Positionen
+
+`GET /orders/{orderId}` — **getOrder** für eine einzelne Bestellung inkl. `products`.
+
+## Fehlerantworten
+
+| Code | Bedeutung |
+|------|-----------|
+| 400 | Ungültige Abfrage oder Body; oft `{ "error": { "formErrors": [], "fieldErrors": { ... } } }` (**ValidationErrorResponse**) |
+| 403 | Fehlender/ungültiger Schlüssel, inaktiver Schlüssel oder fehlende Berechtigung |
+| 503 | z. B. Produktsuche vorübergehend nicht verfügbar |
+
+Häufig enthält die Antwort ein String-Feld **`error`** (siehe **Error** in den OpenAPI-Komponenten).
+
+## OpenAPI
+
+Maschinenlesbare Spezifikation für Tools und Codegenerierung: [`/api-reference/openapi.json`](/api-reference/openapi.json)

@@ -1,6 +1,8 @@
 ---
 title: 'Produkte auflisten'
-description: 'Alle Produkte Ihrer Organisation abrufen'
+description: 'Produkte Ihrer Organisation abrufen oder durchsuchen'
 openapi: 'GET /products'
 version: 'Deutsch'
 ---
+
+Ohne Abfrageparameter `q` liefert der Endpunkt die vollständige Produktliste. Mit `q` und einem nicht leeren Suchbegriff erfolgt eine Volltextsuche (z. B. über Name und Barcode). Die Parameter `limit` (1–250, Standard 100) und `store` wirken nur bei einer Suche mit `q`; `store` begrenzt die Treffer auf Produkte, die für diesen Laden freigegeben sind.

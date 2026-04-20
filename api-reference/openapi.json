@@ -5,6 +5,24 @@
     "description": "API documentation for Scango's dashboard services",
     "version": "1.0.0"
   },
+  "tags": [
+    {
+      "name": "Products",
+      "description": "Product catalog: list, search, create, update, and delete."
+    },
+    {
+      "name": "Orders",
+      "description": "Orders within a time range and single-order details."
+    },
+    {
+      "name": "Suppliers",
+      "description": "Supplier directory for your organization."
+    },
+    {
+      "name": "Categories",
+      "description": "Product categories."
+    }
+  ],
   "servers": [
     {
       "url": "https://dashboard.scango.ch/api/v1"
@@ -18,7 +36,42 @@
   "paths": {
     "/products": {
       "get": {
-        "description": "Returns all products of a specific organization",
+        "tags": ["Products"],
+        "summary": "List or search products",
+        "operationId": "listProducts",
+        "description": "Returns products for your organization. With no `q` parameter (or an empty value after trimming), returns the complete product list from the database. When `q` is a non-empty string, returns products matching the query using full-text search over indexed fields (for example name and barcode). The `limit` and `store` parameters apply only when searching with `q`.",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "description": "Search text. If omitted or empty, all products are returned.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "description": "Maximum number of hits when using `q`. Must be between 1 and 250. Default is 100.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 250,
+              "default": 100
+            }
+          },
+          {
+            "name": "store",
+            "in": "query",
+            "required": false,
+            "description": "When using `q`, only include products allowed for this store ID.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "security": [
           {
             "bearerAuth": []
@@ -26,7 +79,7 @@
         ],
         "responses": {
           "200": {
-            "description": "List of products",
+            "description": "List of products. When `q` is used, results come from search and field set may differ slightly from the full list response.",
             "content": {
               "application/json": {
                 "schema": {
@@ -39,6 +92,58 @@
                       }
                     }
                   }
+                },
+                "examples": {
+                  "fullCatalog": {
+                    "summary": "Full catalog (no search)",
+                    "value": {
+                      "data": [
+                        {
+                          "id": "a1b2c3",
+                          "name": "Mineral water 50cl",
+                          "price": 120,
+                          "barcode": "7610800001234",
+                          "taxCategory": "2.6",
+                          "category": "cat_01",
+                          "supplier": "sup_01"
+                        }
+                      ]
+                    }
+                  },
+                  "searchResults": {
+                    "summary": "Search with q",
+                    "value": {
+                      "data": [
+                        {
+                          "id": "a1b2c3",
+                          "name": "Mineral water 50cl",
+                          "price": 120,
+                          "barcode": "7610800001234",
+                          "taxCategory": "2.6",
+                          "instance": "org_01",
+                          "_firestore_id": "a1b2c3"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid query parameters (for example `limit` out of range)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorResponse"
+                },
+                "example": {
+                  "error": {
+                    "formErrors": [],
+                    "fieldErrors": {
+                      "limit": ["Number must be less than or equal to 250"]
+                    }
+                  }
                 }
               }
             }
@@ -49,6 +154,22 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Forbidden"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Product search is temporarily unavailable or the search request failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Product search is temporarily unavailable"
                 }
               }
             }
@@ -56,6 +177,9 @@
         }
       },
       "post": {
+        "tags": ["Products"],
+        "summary": "Create product",
+        "operationId": "createProduct",
         "description": "Creates a new product. Requires an API key with write permissions.",
         "security": [
           {
@@ -69,6 +193,20 @@
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/NewProduct"
+              },
+              "example": {
+                "name": "Orange juice 1L",
+                "price": 349,
+                "taxCategory": "2.6",
+                "description": "Fresh orange juice",
+                "supplier": "sup_01",
+                "category": "cat_beverages",
+                "barcode": "7610800009999",
+                "showOnHomescreen": true,
+                "showOnScreen": true,
+                "ageRestriction": false,
+                "showOnScale": false,
+                "saleStop": false
               }
             }
           }
@@ -88,6 +226,10 @@
                       "type": "string"
                     }
                   }
+                },
+                "example": {
+                  "success": true,
+                  "id": "newProductId"
                 }
               }
             }
@@ -98,6 +240,9 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Forbidden"
                 }
               }
             }
@@ -107,6 +252,9 @@
     },
     "/products/{productId}": {
       "get": {
+        "tags": ["Products"],
+        "summary": "Get product by ID",
+        "operationId": "getProduct",
         "description": "Returns a specific product",
         "parameters": [
           {
@@ -131,6 +279,23 @@
                       "$ref": "#/components/schemas/Product"
                     }
                   }
+                },
+                "example": {
+                  "data": {
+                    "id": "a1b2c3",
+                    "name": "Mineral water 50cl",
+                    "price": 120,
+                    "barcode": "7610800001234",
+                    "taxCategory": "2.6",
+                    "category": "cat_01",
+                    "supplier": "sup_01",
+                    "description": "",
+                    "showOnHomescreen": true,
+                    "showOnScreen": true,
+                    "ageRestriction": false,
+                    "showOnScale": false,
+                    "saleStop": false
+                  }
                 }
               }
             }
@@ -138,6 +303,9 @@
         }
       },
       "post": {
+        "tags": ["Products"],
+        "summary": "Update product",
+        "operationId": "updateProduct",
         "description": "Updates a specific product",
         "parameters": [
           {
@@ -173,6 +341,9 @@
                       "type": "boolean"
                     }
                   }
+                },
+                "example": {
+                  "success": true
                 }
               }
             }
@@ -180,6 +351,9 @@
         }
       },
       "delete": {
+        "tags": ["Products"],
+        "summary": "Delete product",
+        "operationId": "deleteProduct",
         "description": "Deletes a specific product",
         "parameters": [
           {
@@ -204,6 +378,9 @@
                       "type": "boolean"
                     }
                   }
+                },
+                "example": {
+                  "success": true
                 }
               }
             }
@@ -213,6 +390,9 @@
     },
     "/orders": {
       "get": {
+        "tags": ["Orders"],
+        "summary": "List orders",
+        "operationId": "listOrders",
         "description": "Returns orders of a specific organization",
         "parameters": [
           {
@@ -258,6 +438,23 @@
                       }
                     }
                   }
+                },
+                "example": {
+                  "data": [
+                    {
+                      "id": "order_01",
+                      "orderId": "order_01",
+                      "instance": "org_01",
+                      "store": "store_01",
+                      "price": 4590,
+                      "paymentState": "successful",
+                      "orderDate": {
+                        "_seconds": 1713600000,
+                        "_nanoseconds": 0
+                      },
+                      "products": []
+                    }
+                  ]
                 }
               }
             }
@@ -267,6 +464,9 @@
     },
     "/orders/{orderId}": {
       "get": {
+        "tags": ["Orders"],
+        "summary": "Get order by ID",
+        "operationId": "getOrder",
         "description": "Returns details of a specific order",
         "parameters": [
           {
@@ -291,6 +491,29 @@
                       "$ref": "#/components/schemas/Order"
                     }
                   }
+                },
+                "example": {
+                  "data": {
+                    "id": "order_01",
+                    "orderId": "order_01",
+                    "instance": "org_01",
+                    "store": "store_01",
+                    "price": 4590,
+                    "paymentState": "successful",
+                    "orderDate": {
+                      "_seconds": 1713600000,
+                      "_nanoseconds": 0
+                    },
+                    "products": [
+                      {
+                        "productId": "a1b2c3",
+                        "quantity": 2,
+                        "title": "Mineral water 50cl",
+                        "price": 120,
+                        "supplier": "sup_01"
+                      }
+                    ]
+                  }
                 }
               }
             }
@@ -300,6 +523,9 @@
     },
     "/suppliers": {
       "get": {
+        "tags": ["Suppliers"],
+        "summary": "List suppliers",
+        "operationId": "listSuppliers",
         "description": "Returns all suppliers of an organization",
         "responses": {
           "200": {
@@ -316,6 +542,15 @@
                       }
                     }
                   }
+                },
+                "example": {
+                  "data": [
+                    {
+                      "id": "sup_01",
+                      "name": "Example supplier",
+                      "description": ""
+                    }
+                  ]
                 }
               }
             }
@@ -325,6 +560,9 @@
     },
     "/suppliers/{supplierId}": {
       "get": {
+        "tags": ["Suppliers"],
+        "summary": "Get supplier by ID",
+        "operationId": "getSupplier",
         "description": "Returns details of a specific supplier",
         "parameters": [
           {
@@ -349,6 +587,13 @@
                       "$ref": "#/components/schemas/Supplier"
                     }
                   }
+                },
+                "example": {
+                  "data": {
+                    "id": "sup_01",
+                    "name": "Example supplier",
+                    "description": ""
+                  }
                 }
               }
             }
@@ -358,6 +603,9 @@
     },
     "/categories": {
       "get": {
+        "tags": ["Categories"],
+        "summary": "List categories",
+        "operationId": "listCategories",
         "description": "Returns all categories of an organization",
         "responses": {
           "200": {
@@ -374,6 +622,15 @@
                       }
                     }
                   }
+                },
+                "example": {
+                  "data": [
+                    {
+                      "id": "cat_01",
+                      "name": "Beverages",
+                      "description": ""
+                    }
+                  ]
                 }
               }
             }
@@ -383,6 +640,9 @@
     },
     "/categories/{categoryId}": {
       "get": {
+        "tags": ["Categories"],
+        "summary": "Get category by ID",
+        "operationId": "getCategory",
         "description": "Returns details of a specific category",
         "parameters": [
           {
@@ -407,6 +667,13 @@
                       "$ref": "#/components/schemas/Category"
                     }
                   }
+                },
+                "example": {
+                  "data": {
+                    "id": "cat_01",
+                    "name": "Beverages",
+                    "description": ""
+                  }
                 }
               }
             }
@@ -420,6 +687,10 @@
       "Product": {
         "type": "object",
         "properties": {
+          "id": {
+            "type": "string",
+            "description": "Firestore document id (present in list and get responses)"
+          },
           "name": {
             "type": "string",
             "description": "Name of the product"
@@ -657,14 +928,47 @@
           }
         }
       },
-      "Error": {
+      "ValidationError": {
         "type": "object",
+        "description": "Zod `flatten()` output: top-level `formErrors` and per-field `fieldErrors`.",
+        "properties": {
+          "formErrors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "fieldErrors": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "ValidationErrorResponse": {
+        "type": "object",
+        "description": "Returned when query or body validation fails on some endpoints (e.g. invalid query parameters on GET /products). The `error` property holds a Zod flatten object.",
         "properties": {
           "error": {
-            "type": "string"
+            "$ref": "#/components/schemas/ValidationError"
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "description": "Most error responses use a string `error` field. Some responses may include `message` instead. Prefer reading `error` when present.",
+        "properties": {
+          "error": {
+            "type": "string",
+            "description": "Human-readable error (most common)"
           },
           "message": {
-            "type": "string"
+            "type": "string",
+            "description": "Alternative message field on some errors"
           }
         }
       }

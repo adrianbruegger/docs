@@ -1,0 +1,50 @@
+---
+title: 'Agent recipes'
+description: 'Common API flows for automation and assistants'
+version: 'English'
+---
+
+## Authentication
+
+Send `Authorization: Bearer <api-key>` on every request. Base URL: `https://dashboard.scango.ch/api/v1`.
+
+## Resolve a product by barcode or name
+
+Use `GET /products` with `q` (full-text search). Stable id: **listProducts**.
+
+```http
+GET /products?q=7610800001234&limit=50
+```
+
+Read `data[]` for hits. Use `id` as the product id (search hits may also include `_firestore_id`).
+
+## Load full product details
+
+1. Obtain a product id from search or your own system.
+2. `GET /products/{productId}` — **getProduct**
+
+Response: `{ "data": { ... } }`.
+
+## List orders in a time window
+
+`GET /orders` with `start` and `end` as ISO 8601 datetimes — **listOrders**.
+
+Poll at an interval when you need fresh data; webhooks are not available yet (see Introduction).
+
+## Order line items and totals
+
+`GET /orders/{orderId}` — **getOrder** for a single order including `products` lines.
+
+## Error responses
+
+| Code | When |
+|------|------|
+| 400 | Invalid query or body; often `{ "error": { "formErrors": [], "fieldErrors": { ... } } }` (**ValidationErrorResponse**) |
+| 403 | Missing or invalid key, inactive key, or insufficient permissions |
+| 503 | E.g. product search temporarily unavailable |
+
+Most failures return an object with a string **`error`** field (see **Error** in the OpenAPI components).
+
+## OpenAPI
+
+Use the machine-readable spec for tools and codegen: [`/api-reference/openapi.json`](/api-reference/openapi.json)
