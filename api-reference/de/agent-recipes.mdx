@@ -16,7 +16,11 @@ Jede Anfrage enthält `Authorization: Bearer <api-key>`. Basis-URL: `https://das
 GET /products?q=7610800001234&limit=50
 ```
 
-Treffer stehen in `data[]`; die Produkt-ID steht in `id`. `meta` liefert Trefferzahlen (`total`/`returned`, bei Suche mit `q` auch `limit`/`offset`).
+Treffer stehen in `data[]`; die Produkt-ID steht in `id`. `meta` liefert `total`/`returned` und den angewendeten `limit` (Standard 100; bei Suche mit `q` außerdem `offset`, effektive Obergrenze 250).
+
+## Mehr Einträge listen
+
+`GET /products`, `GET /orders`, `GET /suppliers` und `GET /categories` akzeptieren `limit` (Standard 100, Maximum 5000). Erhöhen Sie `limit` oder nutzen Sie bei der Produktsuche `offset`, wenn Sie weitere Seiten brauchen.
 
 ## Produktdetails laden
 

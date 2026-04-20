@@ -5,4 +5,4 @@ openapi: 'GET /orders'
 version: 'English'
 ---
 
-The response includes **`meta`** with `total` and `returned` (equal for this endpoint). See [Introduction](/api-reference/en/introduction#list-responses-meta).
+Use optional **`limit`** (1–5000, default 100) to cap how many orders are returned (newest first). The response **`meta`** includes `total`, `returned`, and `limit` (`total` and `returned` match the size of `data` in this response). See [Introduction](/api-reference/en/introduction#list-responses-meta).

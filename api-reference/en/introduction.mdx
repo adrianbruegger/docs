@@ -25,10 +25,11 @@ Every **list** endpoint returns `data` (the array) and **`meta`** with at least:
 
 | Field | Meaning |
 | --- | --- |
-| `total` | How many items match the query (for product **search** with `q`, this is the search index’s **estimated** total; for full catalog and for orders, suppliers, and categories lists, it equals the number of items returned in this response). |
+| `total` | For product **search** with `q`, the search index’s **estimated** total matches. For all other list endpoints, this equals the number of items in this response (same as `returned`). |
 | `returned` | How many items are in `data` for this response. |
+| `limit` | Applied page size from the `limit` query parameter (default **100**, maximum **5000**). Product search with `q` caps the effective page size at **250**. |
 
-When you **search products** with `q`, `meta` also includes `limit` and `offset` for the requested page window. Until server-side pagination exists for other resources, `total` and `returned` are the same for those lists.
+List endpoints support an optional **`limit`** query parameter (default 100, max 5000). When you **search products** with `q`, `meta` also includes **`offset`** for pagination.
 
 ## API Structure
 

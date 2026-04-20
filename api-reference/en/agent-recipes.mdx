@@ -16,7 +16,11 @@ Use `GET /products` with `q` (full-text search). Stable id: **listProducts**.
 GET /products?q=7610800001234&limit=50
 ```
 
-Read `data[]` for hits; each product’s id is in `id`. Use `meta` for total/returned counts (and `limit`/`offset` when searching with `q`).
+Read `data[]` for hits; each product’s id is in `id`. Use `meta` for total/returned and the applied `limit` (default 100; search with `q` also includes `offset`, and caps the effective page size at 250).
+
+## List more rows
+
+`GET /products`, `GET /orders`, `GET /suppliers`, and `GET /categories` accept `limit` (default 100, max 5000). Increase `limit` or use product search `offset` when you need additional pages.
 
 ## Load full product details
 

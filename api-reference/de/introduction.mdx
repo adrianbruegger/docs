@@ -25,10 +25,11 @@ Jeder **Listen**-Endpunkt liefert `data` (das Array) und zusätzlich **`meta`** 
 
 | Feld | Bedeutung |
 | --- | --- |
-| `total` | Anzahl passender Einträge (bei **Produktsuche** mit `q` die **geschätzte** Trefferzahl des Suchindexes; bei vollständiger Produktliste sowie bei Bestellungen, Lieferanten und Kategorien entspricht der Wert der Anzahl der in dieser Antwort gelieferten Einträge). |
+| `total` | Bei **Produktsuche** mit `q` die **geschätzte** Trefferzahl des Suchindexes. Bei allen anderen Listen entspricht der Wert der Anzahl der in dieser Antwort gelieferten Einträge (wie `returned`). |
 | `returned` | Anzahl der Einträge im Array `data` in dieser Antwort. |
+| `limit` | Angewendete Seitengröße aus dem Abfrageparameter `limit` (Standard **100**, Maximum **5000**). Bei Produktsuche mit `q` liegt die effektive Obergrenze bei **250**. |
 
-Bei **Produktsuche** mit `q` enthält `meta` außerdem `limit` und `offset` für das angefragte Fenster. Solange andere Ressourcen keine serverseitige Paginierung haben, sind `total` und `returned` dort gleich.
+Listen-Endpunkte unterstützen einen optionalen Abfrageparameter **`limit`** (Standard 100, Maximum 5000). Bei **Produktsuche** mit `q` enthält `meta` außerdem **`offset`** für die Paginierung.
 
 ## API-Struktur
 

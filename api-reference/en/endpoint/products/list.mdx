@@ -5,6 +5,6 @@ openapi: 'GET /products'
 version: 'English'
 ---
 
-Without the `q` query parameter, the endpoint returns the full product list. With `q` set to a non-empty search string, results are returned from full-text search (for example on name and barcode). The `limit` (1–250, default 100), `offset` (0–10000, default 0), and `store` parameters apply only when searching with `q`; `store` limits hits to products allowed for that store.
+Without the `q` query parameter, the endpoint returns products from the database up to **`limit`** (1–5000, default 100). With `q` set to a non-empty search string, results come from full-text search (for example on name and barcode); the same `limit` applies, but search **caps** the effective page size at **250** (see `meta.limit`). Use **`offset`** (0–10000, default 0) only with `q` for pagination. **`store`** applies only when searching with `q` and limits hits to products allowed for that store.
 
-Responses include **`meta`** (`total`, `returned`, and when using `q`, `limit` and `offset`). See [Introduction](/api-reference/en/introduction#list-responses-meta).
+Responses include **`meta`** (`total`, `returned`, `limit`, and when using `q`, `offset`). See [Introduction](/api-reference/en/introduction#list-responses-meta).

@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "Scango API",
-    "description": "API documentation for Scango's dashboard services.\n\n**List endpoints** return `data` plus `meta` with hit counts (`total`, `returned`; product search with `q` also includes `limit` and `offset`). See schema `ListMeta`.",
+    "description": "API documentation for Scango's dashboard services.\n\n**List endpoints** (`GET /products`, `GET /orders`, `GET /suppliers`, `GET /categories`) return `data` plus `meta` with `total`, `returned`, and `limit` (applied page size; default **100**, maximum **5000** unless noted). Product search with `q` also includes `offset` and caps the effective page size at **250**. See schema `ListMeta`.",
     "version": "1.0.0"
   },
   "tags": [
@@ -39,7 +39,7 @@
         "tags": ["Products"],
         "summary": "List or search products",
         "operationId": "listProducts",
-        "description": "Returns products for your organization. With no `q` parameter (or an empty value after trimming), returns the complete product list from the database. When `q` is a non-empty string, returns products matching the query using full-text search over indexed fields (for example name and barcode). The `limit`, `offset`, and `store` parameters apply only when searching with `q`. Every successful list response includes `meta` with hit counts (and `limit`/`offset` when searching).",
+        "description": "Returns products for your organization. With no `q` parameter (or an empty value after trimming), returns products from the database up to the requested `limit` (default 100, max 5000). When `q` is a non-empty string, returns products matching the query using full-text search (for example name and barcode); the same `limit` applies, but the search service **caps** the effective page size at **250** (see `meta.limit` in the response). Use `offset` (with `q` only) for pagination. The `store` parameter applies only when searching with `q`. Every successful list response includes `meta` with hit counts, `limit`, and when using `q`, `offset`.",
         "parameters": [
           {
             "name": "q",
@@ -54,11 +54,11 @@
             "name": "limit",
             "in": "query",
             "required": false,
-            "description": "Maximum number of hits when using `q`. Must be between 1 and 250. Default is 100.",
+            "description": "Maximum number of products in this response. Must be between 1 and 5000. Default is 100. Applies with or without `q`; when using `q`, search caps the effective value at 250.",
             "schema": {
               "type": "integer",
               "minimum": 1,
-              "maximum": 250,
+              "maximum": 5000,
               "default": 100
             }
           },
@@ -91,7 +91,7 @@
         ],
         "responses": {
           "200": {
-            "description": "List of products. When `q` is used, results come from search and field set may differ slightly from the full list response. The response always includes `meta` (see `ListMeta`).",
+            "description": "List of products. When `q` is used, results come from search and field set may differ slightly from the non-search response. The response always includes `meta` with `limit` (and `offset` when searching); see `ListMeta`.",
             "content": {
               "application/json": {
                 "schema": {
@@ -126,7 +126,8 @@
                       ],
                       "meta": {
                         "total": 1,
-                        "returned": 1
+                        "returned": 1,
+                        "limit": 100
                       }
                     }
                   },
@@ -167,7 +168,7 @@
                   "error": {
                     "formErrors": [],
                     "fieldErrors": {
-                      "limit": ["Number must be less than or equal to 250"]
+                      "limit": ["Number must be less than or equal to 5000"]
                     }
                   }
                 }
@@ -419,7 +420,7 @@
         "tags": ["Orders"],
         "summary": "List orders",
         "operationId": "listOrders",
-        "description": "Returns orders of a specific organization. The response includes `meta` with hit counts (`ListMeta`). The API returns all matching orders in one response (no `limit`/`offset`); `total` and `returned` are equal.",
+        "description": "Returns orders of a specific organization matching the filters, up to `limit` (default 100, max 5000), ordered by `orderDate` descending. The response includes `meta` with hit counts and the applied `limit` (`ListMeta`). `total` and `returned` are the number of orders in this response (not the full count across all matching orders).",
         "parameters": [
           {
             "name": "start",
@@ -446,6 +447,18 @@
             "schema": {
               "type": "string",
               "enum": ["successful", "cancelled", "timeout", "failed", "pending"]
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "description": "Maximum number of orders to return. Integer 1–5000. Default 100.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 5000,
+              "default": 100
             }
           }
         ],
@@ -487,7 +500,8 @@
                   ],
                   "meta": {
                     "total": 1,
-                    "returned": 1
+                    "returned": 1,
+                    "limit": 100
                   }
                 }
               }
@@ -560,7 +574,21 @@
         "tags": ["Suppliers"],
         "summary": "List suppliers",
         "operationId": "listSuppliers",
-        "description": "Returns all suppliers of an organization. The response includes `meta` (`ListMeta`). `total` and `returned` match the length of `data`.",
+        "description": "Returns suppliers of an organization, up to `limit` (default 100, max 5000). The response includes `meta` (`ListMeta`) with `total`, `returned`, and `limit` (length of `data` matches `returned`).",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "description": "Maximum number of suppliers to return. Integer 1–5000. Default 100.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 5000,
+              "default": 100
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "List of suppliers with `meta`.",
@@ -591,7 +619,8 @@
                   ],
                   "meta": {
                     "total": 1,
-                    "returned": 1
+                    "returned": 1,
+                    "limit": 100
                   }
                 }
               }
@@ -648,7 +677,21 @@
         "tags": ["Categories"],
         "summary": "List categories",
         "operationId": "listCategories",
-        "description": "Returns all categories of an organization. The response includes `meta` (`ListMeta`). `total` and `returned` match the length of `data`.",
+        "description": "Returns categories of an organization, up to `limit` (default 100, max 5000). The response includes `meta` (`ListMeta`) with `total`, `returned`, and `limit` (length of `data` matches `returned`).",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "description": "Maximum number of categories to return. Integer 1–5000. Default 100.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 5000,
+              "default": 100
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "List of categories with `meta`.",
@@ -679,7 +722,8 @@
                   ],
                   "meta": {
                     "total": 1,
-                    "returned": 1
+                    "returned": 1,
+                    "limit": 100
                   }
                 }
               }
@@ -981,11 +1025,11 @@
       "ListMeta": {
         "type": "object",
         "required": ["total", "returned"],
-        "description": "Included on every list response. When the endpoint does not paginate server-side, `total` and `returned` are the same (length of `data`). When listing products with `q`, `total` is the search index’s estimated number of matching documents; `returned` is how many items are in this response; `limit` and `offset` describe the requested window.",
+        "description": "Included on every list response. `returned` is the length of `data`. For Firestore-backed lists (`/products` without `q`, `/orders`, `/suppliers`, `/categories`), `total` equals `returned` for that response (the API does not return a separate full match count). For product search with `q`, `total` is the search index’s estimated number of matching documents. `limit` is the applied page size (query default **100**, maximum **5000**; search with `q` caps the effective page size at **250**). `offset` is only used for product search with `q`.",
         "properties": {
           "total": {
             "type": "integer",
-            "description": "Estimated or exact count of matching items (see endpoint behavior). For product search with `q`, this is the search engine’s estimated total hits and may not be exact for very large indexes."
+            "description": "For product search with `q`, the search engine’s estimated total hits (may be approximate). For other list endpoints, the number of items in this response (same as `returned`)."
           },
           "returned": {
             "type": "integer",
@@ -993,11 +1037,11 @@
           },
           "limit": {
             "type": "integer",
-            "description": "Only when using `GET /products` with `q`: maximum hits per response (1–250)."
+            "description": "Applied `limit` from the request (default 100, max 5000). With `GET /products` and `q`, the effective value is at most 250."
           },
           "offset": {
             "type": "integer",
-            "description": "Only when using `GET /products` with `q`: number of hits skipped (pagination)."
+            "description": "Only when using `GET /products` with `q`: number of search hits skipped (pagination)."
           }
         }
       },
